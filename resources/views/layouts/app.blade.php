@@ -6,10 +6,18 @@
     <meta name="description" content="Kartu Review Pintar NFC & QR – Aktivasi kartu digital Anda dan arahkan pelanggan langsung ke ulasan Google Maps bisnis Anda.">
     <title>@yield('title', 'Kartu Review Pintar') – NFC & QR</title>
 
-    {{-- Google Fonts: Inter --}}
+    {{-- Favicon & OpenGraph Meta Tags --}}
+    <link rel="icon" type="image/jpeg" href="{{ asset('logo-kartu-pintar.jpg') }}">
+    <meta property="og:title" content="Kartu Review Pintar – NFC & QR">
+    <meta property="og:description" content="Kartu Review Pintar NFC & QR – Aktivasi kartu digital Anda dan arahkan pelanggan langsung ke ulasan Google Maps bisnis Anda.">
+    <meta property="og:image" content="{{ asset('logo-kartu-pintar.jpg') }}">
+    <meta property="og:url" content="{{ url()->current() }}">
+    <meta property="og:type" content="website">
+
+    {{-- Google Fonts: Archivo Black, JetBrains Mono, Inter --}}
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
 
     {{-- TailwindCSS Play CDN --}}
     <script src="https://cdn.tailwindcss.com"></script>
@@ -19,35 +27,28 @@
                 extend: {
                     fontFamily: {
                         sans: ['Inter', 'ui-sans-serif', 'system-ui'],
+                        display: ['"Archivo Black"', 'sans-serif'],
+                        mono: ['"JetBrains Mono"', 'monospace'],
                     },
                     colors: {
-                        brand: {
-                            50:  '#eff6ff',
-                            100: '#dbeafe',
-                            400: '#60a5fa',
-                            500: '#3b82f6',
-                            600: '#2563eb',
-                            700: '#1d4ed8',
-                            800: '#1e40af',
-                            900: '#1e3a8a',
+                        google: {
+                            blue: '#4285F4',
+                            red: '#EA4335',
+                            yellow: '#FBBC05',
+                            green: '#34A853',
+                            surface: '#ffffff',
+                            text: '#111827',
+                            gray: '#f8f9fa',
                         }
-                    },
-                    backgroundImage: {
-                        'hero-gradient': 'linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0c1445 100%)',
                     },
                     animation: {
                         'fade-up': 'fadeUp 0.5s ease-out forwards',
                         'pulse-slow': 'pulse 3s ease-in-out infinite',
-                        'float': 'float 6s ease-in-out infinite',
                     },
                     keyframes: {
                         fadeUp: {
                             '0%':   { opacity: '0', transform: 'translateY(20px)' },
                             '100%': { opacity: '1', transform: 'translateY(0)' },
-                        },
-                        float: {
-                            '0%, 100%': { transform: 'translateY(0px)' },
-                            '50%':      { transform: 'translateY(-8px)' },
                         }
                     }
                 }
@@ -56,102 +57,116 @@
     </script>
 
     <style>
-        body { font-family: 'Inter', sans-serif; }
-        .glass {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background-color: #ffffff;
+            color: #111827;
         }
-        .glass-white {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
+        .font-bold-display {
+            font-family: 'Archivo Black', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: -0.02em;
+        }
+        .card-solid {
+            background: #ffffff;
+            border: 3px solid #111827;
+            box-shadow: 8px 8px 0px rgba(17, 24, 39, 0.1);
+            border-radius: 1rem;
         }
         .input-field {
             width: 100%;
-            padding: 0.75rem 1rem;
-            background: rgba(255,255,255,0.07);
-            border: 1px solid rgba(255,255,255,0.15);
-            border-radius: 0.75rem;
-            color: white;
+            padding: 0.875rem 1rem;
+            background: #f8f9fa;
+            border: 2px solid #e5e7eb;
+            border-radius: 0.5rem;
+            color: #111827;
+            font-family: 'JetBrains Mono', monospace;
             font-size: 0.95rem;
             transition: all 0.2s ease;
             outline: none;
         }
-        .input-field::placeholder { color: rgba(255,255,255,0.35); }
+        .input-field::placeholder { color: #9ca3af; }
         .input-field:focus {
-            background: rgba(255,255,255,0.12);
-            border-color: rgba(99,179,237,0.7);
-            box-shadow: 0 0 0 3px rgba(59,130,246,0.2);
+            background: #ffffff;
+            border-color: #4285F4;
+            box-shadow: 0 0 0 4px rgba(66, 133, 244, 0.15);
         }
         .input-field.error {
-            border-color: rgba(248,113,113,0.7);
-            box-shadow: 0 0 0 3px rgba(239,68,68,0.15);
+            border-color: #EA4335;
+            box-shadow: 0 0 0 4px rgba(234, 67, 53, 0.15);
         }
-        .btn-primary {
+        .btn-google-blue {
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 0.5rem;
             width: 100%;
-            padding: 0.875rem 1.5rem;
-            background: linear-gradient(135deg, #3b82f6 0%, #6366f1 100%);
+            padding: 1rem 1.5rem;
+            background: #4285F4;
             color: white;
-            font-weight: 600;
-            font-size: 0.95rem;
-            border-radius: 0.875rem;
-            border: none;
+            font-family: 'Archivo Black', sans-serif;
+            text-transform: uppercase;
+            font-size: 1rem;
+            border-radius: 0.5rem;
+            border: 2px solid #4285F4;
             cursor: pointer;
             transition: all 0.2s ease;
-            box-shadow: 0 4px 15px rgba(59,130,246,0.35);
         }
-        .btn-primary:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 8px 25px rgba(59,130,246,0.5);
+        .btn-google-blue:hover {
+            background: #3367d6;
+            border-color: #3367d6;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(66, 133, 244, 0.3);
         }
-        .btn-primary:active { transform: translateY(0); }
+        .btn-google-blue:active { transform: translateY(0); }
+        
+        .btn-google-green {
+            background: #34A853;
+            border-color: #34A853;
+        }
+        .btn-google-green:hover {
+            background: #2b8240;
+            border-color: #2b8240;
+            box-shadow: 0 6px 15px rgba(52, 168, 83, 0.3);
+        }
+
+        .btn-google-red {
+            background: #EA4335;
+            border-color: #EA4335;
+        }
+        .btn-google-red:hover {
+            background: #c5221f;
+            border-color: #c5221f;
+            box-shadow: 0 6px 15px rgba(234, 67, 53, 0.3);
+        }
+
         .glow-dot {
-            width: 8px; height: 8px;
+            width: 10px; height: 10px;
             border-radius: 50%;
-            background: #22c55e;
-            box-shadow: 0 0 10px #22c55e, 0 0 20px rgba(34,197,94,0.4);
+            background: #34A853;
+            box-shadow: 0 0 10px #34A853;
             animation: pulse 2s ease-in-out infinite;
         }
     </style>
 </head>
-<body class="min-h-full bg-hero-gradient font-sans antialiased">
-
-    {{-- Decorative background orbs --}}
-    <div class="fixed inset-0 overflow-hidden pointer-events-none" aria-hidden="true">
-        <div class="absolute -top-40 -right-40 w-96 h-96 rounded-full opacity-10 animate-pulse-slow"
-             style="background: radial-gradient(circle, #3b82f6, transparent 70%);"></div>
-        <div class="absolute -bottom-40 -left-40 w-96 h-96 rounded-full opacity-10 animate-pulse-slow"
-             style="background: radial-gradient(circle, #6366f1, transparent 70%); animation-delay: 1s;"></div>
-        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full opacity-5"
-             style="background: radial-gradient(circle, #818cf8, transparent 70%);"></div>
-    </div>
+<body class="min-h-full font-sans antialiased text-google-text">
 
     {{-- Main content --}}
     <main class="relative min-h-screen flex flex-col items-center justify-center px-4 py-12">
 
         {{-- Logo/Brand --}}
         <div class="mb-8 text-center animate-fade-up">
-            <div class="inline-flex items-center gap-3 glass rounded-full px-5 py-2.5">
-                <svg class="w-5 h-5 text-blue-400" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round"
-                          d="M9.75 9.75l4.5 4.5m0-4.5l-4.5 4.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                </svg>
-                <span class="text-sm font-semibold text-white/80 tracking-wide">Kartu Review Pintar</span>
-                <div class="glow-dot"></div>
+            <div class="inline-flex items-center gap-3 border-2 border-google-text rounded-full pl-2 pr-6 py-2 bg-white shadow-[4px_4px_0px_rgba(17,24,39,0.1)]">
+                <img src="{{ asset('logo-kartu-pintar.jpg') }}" alt="Logo" class="w-10 h-10 rounded-full border-2 border-google-text">
+                <span class="text-sm font-bold-display text-google-text tracking-wide mt-1">Kartu Pintar</span>
             </div>
         </div>
 
         @yield('content')
 
         {{-- Footer --}}
-        <p class="mt-10 text-xs text-white/25 text-center">
-            &copy; {{ date('Y') }} Kartu Review Pintar NFC &amp; QR &middot; Powered by Smart Link Engine
+        <p class="mt-12 text-sm font-bold text-gray-400 text-center">
+            &copy; {{ date('Y') }} KARTU REVIEW PINTAR NFC &amp; QR
         </p>
     </main>
 

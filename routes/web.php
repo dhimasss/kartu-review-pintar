@@ -15,8 +15,21 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-// ── Route Admin: Mass Generation Slug (dilindungi secret key) ──────────
-Route::get('/admin/generate', [AdminController::class, 'generate'])
+use App\Http\Controllers\AdminDashboardController;
+
+// ── Route Admin Dashboard ──────────────────────────────────────────────
+Route::get('/admin/login', [AdminDashboardController::class, 'login'])->name('admin.login');
+Route::post('/admin/login', [AdminDashboardController::class, 'authenticate'])->name('admin.authenticate');
+Route::post('/admin/logout', [AdminDashboardController::class, 'logout'])->name('admin.logout');
+
+Route::get('/admin/dashboard', [AdminDashboardController::class, 'index'])->name('admin.dashboard');
+Route::post('/admin/dashboard/update/{id}', [AdminDashboardController::class, 'updateStoreName'])->name('admin.updateStoreName');
+Route::post('/admin/dashboard/suspend/{id}', [AdminDashboardController::class, 'toggleSuspend'])->name('admin.toggleSuspend');
+Route::post('/admin/dashboard/expiry/{id}', [AdminDashboardController::class, 'updateExpiry'])->name('admin.updateExpiry');
+Route::post('/admin/dashboard/generate', [AdminDashboardController::class, 'generate'])->name('admin.dashboard.generate');
+
+// ── Route Admin API (Mass Generation via script/Postman) ───────────────
+Route::post('/admin/generate', [AdminController::class, 'generate'])
     ->name('admin.generate');
 
 // ── Core Link Engine Routes ────────────────────────────────────────────
@@ -31,7 +44,8 @@ Route::get('/{slug}', [LinkEngineController::class, 'show'])
 
 Route::post('/{slug}', [LinkEngineController::class, 'activate'])
     ->name('link.activate')
-    ->where('slug', '[a-zA-Z0-9]+');
+    ->where('slug', '[a-zA-Z0-9]+')
+    ->middleware('throttle:10,1');
 
 Route::get('/{slug}/edit', [LinkEngineController::class, 'editVerify'])
     ->name('link.edit.verify')
@@ -39,4 +53,5 @@ Route::get('/{slug}/edit', [LinkEngineController::class, 'editVerify'])
 
 Route::post('/{slug}/edit', [LinkEngineController::class, 'editUpdate'])
     ->name('link.edit.update')
-    ->where('slug', '[a-zA-Z0-9]+');
+    ->where('slug', '[a-zA-Z0-9]+')
+    ->middleware('throttle:5,1');
