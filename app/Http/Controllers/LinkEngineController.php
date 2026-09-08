@@ -11,12 +11,32 @@ use Illuminate\Support\Str;
 class LinkEngineController extends Controller
 {
     /**
+     * Cek status suspend dan expired.
+     */
+    private function checkStatus($link)
+    {
+        if ($link->is_suspended) {
+            return view('errors.suspended');
+        }
+
+        if ($link->expired_at && $link->expired_at <= now()) {
+            return view('errors.expired');
+        }
+
+        return null;
+    }
+
+    /**
      * GET /{slug}
      * Redirect ke GMB jika sudah diklaim, atau tampilkan form aktivasi.
      */
     public function show(string $slug)
     {
         $link = Link::where('slug', $slug)->firstOrFail();
+
+        if ($errorView = $this->checkStatus($link)) {
+            return $errorView;
+        }
 
         if ($link->is_claimed) {
             // Catat scan log
@@ -42,16 +62,26 @@ class LinkEngineController extends Controller
     {
         $link = Link::where('slug', $slug)->firstOrFail();
 
+        if ($errorView = $this->checkStatus($link)) {
+            return $errorView;
+        }
+
         if ($link->is_claimed) {
             return redirect()->route('link.show', $slug);
         }
 
         $validated = $request->validate([
-            'url_gmb' => ['required', 'url', 'max:2048'],
+            'url_gmb' => [
+                'required', 
+                'url', 
+                'max:2048',
+                'regex:/^https?:\/\/(?:[a-zA-Z0-9-]+\.)*(?:google\.com|goo\.gl|vercel\.app|netlify\.app|makbuln\.web\.id)(?:\/|$)/i'
+            ],
             'pin'     => ['required', 'digits_between:4,6'],
         ], [
-            'url_gmb.required' => 'Link Google Maps wajib diisi.',
+            'url_gmb.required' => 'Link URL wajib diisi.',
             'url_gmb.url'      => 'Format URL tidak valid. Pastikan diawali https://',
+            'url_gmb.regex'    => 'Link harus berupa URL dari Google Maps, Vercel, Netlify, atau makbuln.web.id.',
             'pin.required'     => 'PIN wajib diisi.',
             'pin.digits_between' => 'PIN harus berupa angka 4–6 digit.',
         ]);
@@ -74,6 +104,10 @@ class LinkEngineController extends Controller
     {
         $link = Link::where('slug', $slug)->firstOrFail();
 
+        if ($errorView = $this->checkStatus($link)) {
+            return $errorView;
+        }
+
         if (! $link->is_claimed) {
             return redirect()->route('link.show', $slug);
         }
@@ -88,6 +122,10 @@ class LinkEngineController extends Controller
     public function editUpdate(Request $request, string $slug)
     {
         $link = Link::where('slug', $slug)->firstOrFail();
+
+        if ($errorView = $this->checkStatus($link)) {
+            return $errorView;
+        }
 
         if (! $link->is_claimed) {
             return redirect()->route('link.show', $slug);
@@ -113,10 +151,16 @@ class LinkEngineController extends Controller
         // Step 2: Update URL (PIN sudah diverifikasi di step sebelumnya, re-verify untuk keamanan)
         $request->validate([
             'pin'     => ['required', 'digits_between:4,6'],
-            'url_gmb' => ['required', 'url', 'max:2048'],
+            'url_gmb' => [
+                'required', 
+                'url', 
+                'max:2048',
+                'regex:/^https?:\/\/(?:[a-zA-Z0-9-]+\.)*(?:google\.com|goo\.gl|vercel\.app|netlify\.app|makbuln\.web\.id)(?:\/|$)/i'
+            ],
         ], [
-            'url_gmb.required' => 'Link Google Maps wajib diisi.',
+            'url_gmb.required' => 'Link URL wajib diisi.',
             'url_gmb.url'      => 'Format URL tidak valid. Pastikan diawali https://',
+            'url_gmb.regex'    => 'Link harus berupa URL dari Google Maps, Vercel, Netlify, atau makbuln.web.id.',
             'pin.required'     => 'PIN wajib diisi.',
             'pin.digits_between' => 'PIN harus berupa angka 4–6 digit.',
         ]);

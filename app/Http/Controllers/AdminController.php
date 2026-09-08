@@ -9,35 +9,45 @@ use Illuminate\Support\Str;
 class AdminController extends Controller
 {
     /**
-     * GET /admin/generate?secret=xxx&count=100
+     * POST /admin/generate
      * Generate slug baru dalam jumlah banyak untuk persiapan cetak massal.
      */
     public function generate(Request $request)
     {
         $adminSecret = config('app.admin_secret', 'GANTI_SECRET_INI');
+        
+        $providedSecret = $request->bearerToken() ?? $request->input('secret');
 
-        if ($request->get('secret') !== $adminSecret) {
+        if ($providedSecret !== $adminSecret) {
             abort(403, 'Akses tidak diizinkan. Sertakan secret key yang benar.');
         }
 
-        $count     = (int) $request->get('count', 100);
+        $count     = (int) $request->input('count', 100);
         $count     = max(1, min($count, 500)); // Batasi 1–500
         $generated = [];
+        $insertData = [];
         $attempts  = 0;
+        $now       = now();
 
         while (count($generated) < $count && $attempts < ($count * 5)) {
             $slug = strtolower(Str::random(8));
             $attempts++;
 
-            if (! Link::where('slug', $slug)->exists()) {
-                $link = Link::create([
+            if (!in_array($slug, $generated) && !Link::where('slug', $slug)->exists()) {
+                $generated[] = $slug;
+                $insertData[] = [
                     'slug'       => $slug,
                     'url_gmb'    => null,
                     'is_claimed' => false,
                     'pin'        => null,
-                ]);
-                $generated[] = $link->slug;
+                    'created_at' => $now,
+                    'updated_at' => $now,
+                ];
             }
+        }
+        
+        if (!empty($insertData)) {
+            Link::insert($insertData);
         }
 
         $baseUrl = url('/');

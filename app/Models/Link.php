@@ -11,13 +11,18 @@ class Link extends Model
 
     protected $fillable = [
         'slug',
+        'store_name',
         'url_gmb',
         'is_claimed',
         'pin',
+        'is_suspended',
+        'expired_at',
     ];
 
     protected $casts = [
         'is_claimed' => 'boolean',
+        'is_suspended' => 'boolean',
+        'expired_at' => 'datetime',
     ];
 
     /**
