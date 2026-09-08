@@ -19,6 +19,12 @@
 /storage/*.key
 /storage/pail
 /vendor
+
+# Ignore all .md files
+*.md
+
+# Except README.md
+!README.md
 Homestead.json
 Homestead.yaml
 Thumbs.db
