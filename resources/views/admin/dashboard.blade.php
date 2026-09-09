@@ -106,7 +106,13 @@
                     <tr class="border-b border-gray-200 hover:bg-gray-50 transition-colors">
                         <td class="p-4 align-top">
                             <span class="font-mono bg-gray-200 px-2 py-1 rounded text-sm font-bold block text-center border border-gray-300">{{ $link->slug }}</span>
-                            <a href="{{ url('/'.$link->slug) }}" target="_blank" class="text-[11px] text-google-blue font-bold hover:underline mt-2 text-center block">Test Link &rarr;</a>
+                            <a href="{{ url('/'.$link->slug) }}" target="_blank" class="text-[11px] text-google-blue font-bold hover:underline mt-2 text-center block mb-2">Test Link &rarr;</a>
+                            
+                            <a href="{{ route('admin.downloadQr', $link->id) }}" class="text-[10px] bg-white border border-gray-300 text-gray-700 font-bold py-1 px-2 rounded block text-center hover:bg-gray-50 transition-colors flex items-center justify-center gap-1">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
+                                Download QR
+                            </a>
+
                             <div class="text-[10px] text-gray-400 mt-2 text-center">{{ $link->created_at->format('d/m/Y') }}</div>
                         </td>
                         

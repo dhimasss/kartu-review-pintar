@@ -27,6 +27,7 @@ Route::post('/admin/dashboard/update/{id}', [AdminDashboardController::class, 'u
 Route::post('/admin/dashboard/suspend/{id}', [AdminDashboardController::class, 'toggleSuspend'])->name('admin.toggleSuspend');
 Route::post('/admin/dashboard/expiry/{id}', [AdminDashboardController::class, 'updateExpiry'])->name('admin.updateExpiry');
 Route::post('/admin/dashboard/generate', [AdminDashboardController::class, 'generate'])->name('admin.dashboard.generate');
+Route::get('/admin/dashboard/qr/{id}', [AdminDashboardController::class, 'downloadQr'])->name('admin.downloadQr');
 
 // ── Route Admin API (Mass Generation via script/Postman) ───────────────
 Route::post('/admin/generate', [AdminController::class, 'generate'])
