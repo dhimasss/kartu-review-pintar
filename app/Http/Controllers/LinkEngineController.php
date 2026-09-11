@@ -77,14 +77,13 @@ class LinkEngineController extends Controller
                 'max:2048',
                 'regex:/^https?:\/\/(?:[a-zA-Z0-9-]+\.)*(?:google\.com|goo\.gl|vercel\.app|netlify\.app|makbuln\.web\.id)(?:\/|$)/i'
             ],
-            'store_name' => ['required', 'string', 'max:255'],
+            'store_name' => ['nullable', 'string', 'max:255'],
             'phone_number' => ['required', 'string', 'max:20'],
             'pin'     => ['required', 'digits_between:4,6'],
         ], [
             'url_gmb.required' => 'Link URL wajib diisi.',
             'url_gmb.url'      => 'Format URL tidak valid. Pastikan diawali https://',
             'url_gmb.regex'    => 'Link harus berupa URL dari Google Maps, Vercel, Netlify, atau makbuln.web.id.',
-            'store_name.required' => 'Nama Toko wajib diisi.',
             'phone_number.required' => 'Nomor Telepon wajib diisi.',
             'pin.required'     => 'PIN wajib diisi.',
             'pin.digits_between' => 'PIN harus berupa angka 4–6 digit.',
