@@ -152,6 +152,29 @@ class AdminDashboardController extends Controller
   }
 
   /**
+   * Update URL Google Maps untuk sebuah link.
+   */
+  public function updateUrlGmb(Request $request, $id)
+  {
+    if (!session('admin_logged_in')) {
+      abort(403);
+    }
+
+    $request->validate([
+      'url_gmb' => 'nullable|url|max:2000',
+    ], [
+      'url_gmb.url' => 'Format URL Google Maps tidak valid.'
+    ]);
+
+    $link = Link::findOrFail($id);
+    $link->update([
+      'url_gmb' => $request->url_gmb,
+    ]);
+
+    return back()->with('success', 'URL Google Maps berhasil diperbarui.');
+  }
+
+  /**
    * Generate kartu/slug baru dari dashboard.
    */
   public function generate(Request $request)
