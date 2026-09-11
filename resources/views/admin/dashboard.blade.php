@@ -127,12 +127,19 @@
                             </form>
 
                             <div class="mt-3">
-                                <label class="text-xs font-bold text-gray-500 block mb-1">URL GOOGLE MAPS:</label>
-                                @if($link->url_gmb)
-                                    <a href="{{ $link->url_gmb }}" target="_blank" class="text-xs text-google-blue font-medium hover:underline break-all block max-w-xs">{{ $link->url_gmb }}</a>
-                                @else
-                                    <span class="text-xs text-gray-400 italic">Belum diset oleh pengguna.</span>
-                                @endif
+                                <form action="{{ route('admin.updateUrlGmb', $link->id) }}" method="POST">
+                                    @csrf
+                                    <label class="text-xs font-bold text-gray-500 block mb-1">URL GOOGLE MAPS:</label>
+                                    <div class="flex gap-2">
+                                        <input type="url" name="url_gmb" value="{{ $link->url_gmb }}" class="input-field !py-1 !px-2 !text-sm flex-1 bg-white" placeholder="https://maps.app.goo.gl/..." title="{{ $link->url_gmb }}">
+                                        <button type="submit" class="bg-google-text text-white px-3 py-1 rounded font-bold text-xs hover:bg-gray-800">SIMPAN</button>
+                                    </div>
+                                    @if($link->url_gmb)
+                                        <div class="mt-1">
+                                            <a href="{{ $link->url_gmb }}" target="_blank" class="text-[10px] text-google-blue font-bold hover:underline">Tes Link Maps &rarr;</a>
+                                        </div>
+                                    @endif
+                                </form>
                             </div>
                         </td>
                         
