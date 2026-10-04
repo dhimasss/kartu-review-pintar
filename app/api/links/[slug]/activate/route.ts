@@ -3,6 +3,7 @@ import { getLinkBySlug, updateLink } from '@/lib/firestore/links';
 import { activateSchema } from '@/lib/utils/validation';
 import { hashPin } from '@/lib/utils/hashing';
 import { ApiResponse } from '@/types/api';
+import { toDate } from '@/lib/utils/date';
 
 export async function POST(
   request: NextRequest,
@@ -27,7 +28,7 @@ export async function POST(
     }
     
     // Check if expired
-    if (link.expiredAt && new Date(link.expiredAt) <= new Date()) {
+    if (link.expiredAt && toDate(link.expiredAt) && toDate(link.expiredAt)! <= new Date()) {
       return NextResponse.json<ApiResponse>(
         { success: false, error: 'Kartu ini telah kedaluwarsa' },
         { status: 403 }

@@ -2,9 +2,61 @@ import { getLinkBySlug } from '@/lib/firestore/links';
 import { notFound } from 'next/navigation';
 import ActivationForm from './ActivationForm';
 import { Suspense } from 'react';
+import type { Metadata } from 'next';
+import { Timestamp } from 'firebase/firestore';
 
 interface PageProps {
   params: { slug: string };
+}
+
+function toDate(value: string | Timestamp | null): Date | null {
+  if (!value) return null;
+  if (typeof value === 'string') return new Date(value);
+  if (value instanceof Timestamp) return value.toDate();
+  return null;
+}
+
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const link = await getLinkBySlug(params.slug);
+  
+  if (!link) {
+    return {
+      title: '404 - Kartu Tidak Ditemukan | Kartu Pintar',
+      description: 'Kartu yang Anda cari tidak ditemukan.',
+    };
+  }
+
+  const title = link.storeName 
+    ? `${link.storeName} - Kartu Review Google Maps | Kartu Pintar`
+    : `Kartu Review ${link.slug.toUpperCase()} | Kartu Pintar`;
+  
+  const description = link.storeName
+    ? `Aktivasi kartu review Google Maps untuk ${link.storeName}. Berikan review dan bantu bisnis kami berkembang!`
+    : 'Aktivasi kartu review Google Maps Anda. Mudah, cepat, dan praktis!';
+
+  return {
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      url: `https://kartupintar.my.id/${params.slug}`,
+      siteName: 'Kartu Pintar',
+      images: ['/logo-kartu-pintar.jpg'],
+      locale: 'id_ID',
+      type: 'website',
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+      images: ['/logo-kartu-pintar.jpg'],
+    },
+    robots: {
+      index: link.isSuspended ? false : true,
+      follow: true,
+    },
+  };
 }
 
 async function LinkData({ slug }: { slug: string }) {
@@ -34,7 +86,8 @@ async function LinkData({ slug }: { slug: string }) {
   }
   
   // Check if expired
-  if (link.expiredAt && new Date(link.expiredAt) <= new Date()) {
+  const expiredDate = toDate(link.expiredAt);
+  if (expiredDate && expiredDate <= new Date()) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-white px-4">
         <div className="w-full max-w-md animate-fade-up">

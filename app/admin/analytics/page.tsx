@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { getAnalyticsData } from '@/lib/firestore/scan-logs';
 import { AnalyticsData } from '@/types/scan-log';
+import { Timestamp } from 'firebase/firestore';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -16,6 +17,12 @@ import {
 import { Bar } from 'react-chartjs-2';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
+
+function toDate(value: string | Timestamp): Date {
+  if (typeof value === 'string') return new Date(value);
+  if (value instanceof Timestamp) return value.toDate();
+  return new Date(value);
+}
 
 export default function AnalyticsPage() {
   const [data, setData] = useState<AnalyticsData | null>(null);
@@ -288,7 +295,7 @@ export default function AnalyticsPage() {
                 data?.recentScans.map((scan) => (
                   <tr key={scan.id} className="border-b border-gray-100 last:border-0 hover:bg-gray-50">
                     <td className="p-2 sm:p-3 text-xs sm:text-sm font-bold text-gray-700">
-                      {new Date(scan.createdAt).toLocaleString('id-ID', {
+                      {toDate(scan.createdAt).toLocaleString('id-ID', {
                         day: '2-digit',
                         month: '2-digit',
                         year: 'numeric',

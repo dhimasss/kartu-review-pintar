@@ -4,6 +4,13 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { getLinks, getLinksCount } from '@/lib/firestore/links';
 import { Link as LinkType } from '@/types/link';
+import { Timestamp } from 'firebase/firestore';
+
+function toDate(value: string | Timestamp): Date {
+  if (typeof value === 'string') return new Date(value);
+  if (value instanceof Timestamp) return value.toDate();
+  return new Date(value);
+}
 
 export default function DashboardPage() {
   const [links, setLinks] = useState<LinkType[]>([]);
@@ -325,7 +332,7 @@ export default function DashboardPage() {
                         QR
                       </a>
 
-                      <div className="text-[9px] sm:text-[10px] text-gray-400 mt-2 text-center">{new Date(link.createdAt).toLocaleDateString('id-ID')}</div>
+                      <div className="text-[9px] sm:text-[10px] text-gray-400 mt-2 text-center">{toDate(link.createdAt).toLocaleDateString('id-ID')}</div>
                     </td>
                     
                     <td className="p-2 sm:p-4 align-top">
@@ -396,7 +403,7 @@ export default function DashboardPage() {
                       <div className="mb-2">
                         {link.isSuspended ? (
                           <span className="inline-block bg-google-red/20 text-google-red border-2 border-google-red font-bold px-2 sm:px-3 py-1 rounded-full text-[10px] sm:text-xs">SUSPEND</span>
-                        ) : link.expiredAt && new Date(link.expiredAt) <= new Date() ? (
+                        ) : link.expiredAt && toDate(link.expiredAt) <= new Date() ? (
                           <span className="inline-block bg-google-yellow/20 text-google-yellow border-2 border-google-yellow font-bold px-2 sm:px-3 py-1 rounded-full text-[10px] sm:text-xs">EXPIRED</span>
                         ) : link.isClaimed ? (
                           <span className="inline-block bg-google-green/20 text-google-green border-2 border-google-green font-bold px-2 sm:px-3 py-1 rounded-full text-[10px] sm:text-xs">AKTIF</span>
@@ -408,8 +415,8 @@ export default function DashboardPage() {
                       <div className="text-[10px] sm:text-xs font-bold text-gray-600 mt-2 sm:mt-3">
                         Berakhir:<br />
                         {link.expiredAt ? (
-                          <span className={new Date(link.expiredAt) <= new Date() ? 'text-google-red' : 'text-google-blue'}>
-                            {new Date(link.expiredAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}
+                          <span className={toDate(link.expiredAt) <= new Date() ? 'text-google-red' : 'text-google-blue'}>
+                            {toDate(link.expiredAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}
                           </span>
                         ) : (
                           <span className="text-gray-400">Selamanya</span>
@@ -424,7 +431,7 @@ export default function DashboardPage() {
                           <div className="flex gap-1 sm:gap-2">
                             <input
                               type="datetime-local"
-                              value={expiryInput[link.id] ?? (link.expiredAt ? new Date(new Date(link.expiredAt).getTime() - new Date(link.expiredAt).getTimezoneOffset() * 60000).toISOString().slice(0, 16) : '')}
+                              value={expiryInput[link.id] ?? (link.expiredAt ? new Date(toDate(link.expiredAt).getTime() - toDate(link.expiredAt).getTimezoneOffset() * 60000).toISOString().slice(0, 16) : '')}
                               onChange={(e) => setExpiryInput({ ...expiryInput, [link.id]: e.target.value })}
                               className="input-field !py-1 !px-2 !text-[10px] sm:!text-xs flex-1 bg-white"
                             />

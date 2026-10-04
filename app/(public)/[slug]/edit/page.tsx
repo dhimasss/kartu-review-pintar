@@ -2,9 +2,17 @@ import { getLinkBySlug } from '@/lib/firestore/links';
 import { notFound } from 'next/navigation';
 import EditForm from './EditForm';
 import { Suspense } from 'react';
+import { Timestamp } from 'firebase/firestore';
 
 interface PageProps {
   params: { slug: string };
+}
+
+function toDate(value: string | Timestamp | null): Date | null {
+  if (!value) return null;
+  if (typeof value === 'string') return new Date(value);
+  if (value instanceof Timestamp) return value.toDate();
+  return null;
 }
 
 async function LinkData({ slug }: { slug: string }) {
@@ -34,7 +42,8 @@ async function LinkData({ slug }: { slug: string }) {
   }
   
   // Check if expired
-  if (link.expiredAt && new Date(link.expiredAt) <= new Date()) {
+  const expiredDate = toDate(link.expiredAt);
+  if (expiredDate && expiredDate <= new Date()) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-white px-4">
         <div className="w-full max-w-md animate-fade-up">

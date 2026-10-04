@@ -7,8 +7,8 @@ import { Link } from '@/types/link';
 /**
  * Convert Firestore Timestamps to ISO strings for JSON serialization.
  */
-function serializeLink(link: Link): Record<string, unknown> {
-  const serialized: Record<string, unknown> = { ...link };
+function serializeLink(link: Link): Link {
+  const serialized: any = { ...link };
   if (serialized.createdAt && typeof serialized.createdAt === 'object' && 'toDate' in serialized.createdAt) {
     serialized.createdAt = (serialized.createdAt as { toDate: () => Date }).toDate().toISOString();
   }
@@ -18,7 +18,7 @@ function serializeLink(link: Link): Record<string, unknown> {
   if (serialized.expiredAt && typeof serialized.expiredAt === 'object' && 'toDate' in serialized.expiredAt) {
     serialized.expiredAt = (serialized.expiredAt as { toDate: () => Date }).toDate().toISOString();
   }
-  return serialized;
+  return serialized as Link;
 }
 
 export async function GET(request: NextRequest) {
